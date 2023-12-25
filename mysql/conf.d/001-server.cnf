@@ -1,0 +1,16 @@
+[mysqld]
+default_time_zone = 'Asia/Ho_Chi_Minh'
+server-id               = 1
+relay-log               = /var/log/mysql/mysql-relay-bin.log
+log_bin                 = /var/log/mysql/mysql-bin.log
+#Bin log expire time default 30 days
+#binlog_expire_logs_seconds = 2592000
+#sync_binlog=1
+
+# Performance
+# Remove leading # and set to the amount of RAM for the most important data
+# cache in MySQL. Start at 70% of total RAM for dedicated server, else 10%.
+# innodb_buffer_pool_size = 128M
+# query_cache_size = 8M
+thread_cache_size = 768
+table_open_cache = 8000
