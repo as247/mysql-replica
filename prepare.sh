@@ -6,7 +6,7 @@ fi
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 # Navigate to the script's directory
 cd "$SCRIPT_DIR" || exit
-
+source ./.env
 architecture=$(uname -m)
 passwordLength=16
 if [ "$architecture" == "x86_64" ]; then
@@ -14,10 +14,18 @@ if [ "$architecture" == "x86_64" ]; then
 else
   MYSQL_IMAGE="mysql:8.0.34"
 fi
+#if MYSQL_PORT is not set then set it to 33306
+if [ -z "$MYSQL_PORT" ]; then
+  MYSQL_PORT=33306
+fi
+#if PHPMYADMIN_PORT is not set then set it to 8801
+if [ -z "$PHPMYADMIN_PORT" ]; then
+  PHPMYADMIN_PORT=8801
+fi
 chmod +x *.sh
 echo "MYSQL_IMAGE=$MYSQL_IMAGE" > .env
-echo "MYSQL_PORT=33306" >> .env
-echo "PHPMYADMIN_PORT=8801" >> .env
+echo "MYSQL_PORT=$MYSQL_PORT" >> .env
+echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT" >> .env
 
 if [ ! -f mysql.env ]; then
   echo "mysql.env not found, copying from mysql.env.example"
