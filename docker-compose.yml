@@ -12,7 +12,7 @@ services:
       - ./mysql/conf.d/:/etc/mysql/conf.d
       - ./mysql/init/:/docker-entrypoint-initdb.d
     networks:
-      tinyinstaller:
+      myrdb:
   pma:
     image: phpmyadmin
     restart: always
@@ -21,6 +21,6 @@ services:
     environment:
       - PMA_HOST=db
     networks:
-      tinyinstaller:
+      myrdb:
 networks:
-  tinyinstaller:
+  myrdb:
