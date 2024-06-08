@@ -8,7 +8,7 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 cd "$SCRIPT_DIR" || exit
 source ./.env
 architecture=$(uname -m)
-passwordLength=16
+passwordLength=20
 if [ "$architecture" == "x86_64" ]; then
   MYSQL_IMAGE="mysql:8.0.37-debian"
 else
