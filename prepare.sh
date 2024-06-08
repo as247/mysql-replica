@@ -93,13 +93,13 @@ fi
 if [ ! -f mysql.env ]; then
   echo "mysql.env not found, copying from mysql.env.example"
   cp mysql.env.example mysql.env
-  echo "Generate random password for MYSQL_ROOT_PASSWORD"
+  #echo "Generate random password for MYSQL_ROOT_PASSWORD"
   root_password=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
   sed -i "s/MYSQL_ROOT_PASSWORD=.*/MYSQL_ROOT_PASSWORD=\"$root_password\"/" mysql.env
-  echo "Generate random password for MYSQL_REPLICA_PASSWORD"
+  #echo "Generate random password for MYSQL_REPLICA_PASSWORD"
   replica_password=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
   sed -i "s/MYSQL_REPLICA_PASSWORD=.*/MYSQL_REPLICA_PASSWORD=\"$replica_password\"/" mysql.env
-  echo "Generate random password for MYSQL_PASSWORD"
+  #echo "Generate random password for MYSQL_PASSWORD"
   password=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
   sed -i "s/MYSQL_PASSWORD=.*/MYSQL_PASSWORD=\"$password\"/" mysql.env
   #update mysql root host
