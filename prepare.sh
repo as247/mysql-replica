@@ -88,7 +88,10 @@ if [ ! -f mysql.env ]; then
   echo "Generate random password for MYSQL_PASSWORD"
   password=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
   sed -i "s/MYSQL_PASSWORD=.*/MYSQL_PASSWORD=\"$password\"/" mysql.env
-
+  #update mysql root host
+  #read docker-compose.yml file for root host
+  root_host=$(grep -oP '(?<=subnet: ).*' docker-compose.yml | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | awk -F. '{print $1"."$2"."$3".%"}')
+  sed -i "s/MYSQL_ROOT_HOST=.*/MYSQL_ROOT_HOST=\"$root_host\"/" mysql.env
 
 fi
 
