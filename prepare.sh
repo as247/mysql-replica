@@ -6,7 +6,9 @@ fi
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 # Navigate to the script's directory
 cd "$SCRIPT_DIR" || exit
-source ./.env
+if [ -f .env ]; then
+  source ./.env
+fi
 architecture=$(uname -m)
 passwordLength=20
 if [ "$architecture" == "x86_64" ]; then
