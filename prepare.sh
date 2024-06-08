@@ -82,16 +82,13 @@ else
   #remove string between #phpmyadmin-start and #phpmyadmin-end
   sed -i '/#phpmyadmin-start/,/#phpmyadmin-end/d' docker-compose.yml
 fi
-read -p "Are you sure to use these ports? (y/n) " -r
-if [[ ! $REPLY =~ ^[Yy]$ ]]
-then
-    echo "cancelled"
-    exit 1
-fi
-chmod +x *.sh
+
+#Write to .env file
 echo "MYSQL_IMAGE=$MYSQL_IMAGE" > .env
 echo "MYSQL_PORT=$MYSQL_PORT" >> .env
-echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT" >> .env
+if [ "$PHPMYADMIN_PORT" -ne 0 ]; then
+  echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT" >> .env
+fi
 
 if [ ! -f mysql.env ]; then
   echo "mysql.env not found, copying from mysql.env.example"
