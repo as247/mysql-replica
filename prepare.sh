@@ -9,6 +9,9 @@ cd "$SCRIPT_DIR" || exit
 if [ -f .env ]; then
   source ./.env
 fi
+if [ ! -f docker-compose.yml ]; then
+  cp docker-compose-sample.yml docker-compose.yml
+fi
 architecture=$(uname -m)
 passwordLength=20
 if [ "$architecture" == "x86_64" ]; then
@@ -49,6 +52,14 @@ if [ -z "$MYSQL_PORT" ]; then
     MYSQL_PORT=$MYSQL_DEFAULT_PORT
   fi
 fi
+#Ask if user want to use phpmyadmin
+read -p "Do you want to use phpmyadmin? (y/n) " -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    PHPMYADMIN_PORT=""
+else
+    PHPMYADMIN_PORT=0
+fi
 #if PHPMYADMIN_PORT is not set then set it to 8801
 if [ -z "$PHPMYADMIN_PORT" ]; then
   #ask for phpmyadmin port
@@ -64,7 +75,13 @@ if [ -z "$PHPMYADMIN_PORT" ]; then
 fi
 #confirm mysql port and phpmyadmin port
 echo "MYSQL_PORT=$MYSQL_PORT"
-echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT"
+if [ $PHPMYADMIN_PORT -ne 0 ]; then
+  echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT"
+else
+  #remove phpmyadmin from docker-compose.yml
+  #remove string between #phpmyadmin-start and #phpmyadmin-end
+  sed -i '/#phpmyadmin-start/,/#phpmyadmin-end/d' docker-compose.yml
+fi
 read -p "Are you sure to use these ports? (y/n) " -r
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
