@@ -13,6 +13,8 @@ services:
       - ./mysql/init/:/docker-entrypoint-initdb.d
     networks:
       myrdb:
+        ipv4_address: 172.22.22.2
+
   pma:
     image: phpmyadmin
     restart: always
@@ -22,5 +24,10 @@ services:
       - PMA_HOST=db
     networks:
       myrdb:
+        ipv4_address: 172.22.22.3
 networks:
   myrdb:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.22.22.0/25
