@@ -15,9 +15,9 @@ fi
 architecture=$(uname -m)
 passwordLength=20
 if [ "$architecture" == "x86_64" ]; then
-  MYSQL_IMAGE="mysql:8.0.37-debian"
+  MYSQL_IMAGE="mysql:8.0.38-debian"
 else
-  MYSQL_IMAGE="mysql:8.0.37"
+  MYSQL_IMAGE="mysql:8.0.38"
 fi
 find_free_port() {
     local start_port=$1
