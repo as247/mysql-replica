@@ -18,6 +18,8 @@ services:
   pma:
     image: phpmyadmin
     restart: always
+    ports:
+      - 127.0.0.1:${PHPMYADMIN_PORT}:3306
     environment:
       - PMA_HOST=db
     networks:
