@@ -7,8 +7,8 @@ services:
     ports:
       - ${MYSQL_PORT}:3306
     volumes:
-      - ./mysql/data/:/var/lib/mysql
-      - ./mysql/log/:/var/log/mysql
+      - ./mysql/data/mysql:/var/lib/mysql
+      - ./mysql/data/log:/var/log/mysql
       - ./mysql/conf.d/:/etc/mysql/conf.d
       - ./mysql/init/:/docker-entrypoint-initdb.d
     networks:

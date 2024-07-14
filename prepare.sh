@@ -151,7 +151,6 @@ if [ "$(ls -A mysql/data)" ]; then
     then
         docker compose down
         rm -rf mysql/data/*
-        rm -rf mysql/log/*
     else
         echo "Keep existing data"
     fi
