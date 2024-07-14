@@ -95,6 +95,7 @@ fi
 #Write to .env file
 echo "MYSQL_IMAGE=$MYSQL_IMAGE" > .env
 echo "MYSQL_PORT=$MYSQL_PORT" >> .env
+echo "IP_ADDRESS_PREFIX=$IP_ADDRESS_PREFIX" >> .env
 if [ "$PHPMYADMIN_PORT" -ne 0 ]; then
   echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT" >> .env
 fi
