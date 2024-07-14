@@ -141,23 +141,24 @@ echo "MYSQL_DATABASE=\"$MYSQL_DATABASE\"" >> .env
 echo "MYSQL_USER=\"$MYSQL_USER\"" >> .env
 echo "MYSQL_PASSWORD=\"$MYSQL_PASSWORD\"" >> .env
 
-mkdir -p mysql/data
-mkdir -p mysql/log
+mkdir -p mysql/data/mysql
+mkdir -p mysql/data/log
 # Check if data and log dir empty or not if not empty then try to empty it with confirmation
-if [ "$(ls -A mysql/data)" ]; then
-    read -p "mysql/data is not empty, do you want to empty it? (y/n) " -r
+if [ "$(ls -A mysql/data/mysql)" ]; then
+    read -p "data/mysql is not empty, do you want to empty it? (y/n) " -r
 
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
         docker compose down
         rm -rf mysql/data/*
+        mkdir -p mysql/data/mysql
+        mkdir -p mysql/data/log
     else
         echo "Keep existing data"
     fi
 fi
 
 chown -R 999:999 mysql/data
-chown -R 999:999 mysql/log
 echo "Mysql prepared"
 echo "You can start the mysql server by running 'docker compose up -d'"
 echo "********************************************************"
