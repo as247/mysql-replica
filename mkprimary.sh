@@ -13,10 +13,6 @@ if [ "$(grep -c "server-id[[:space:]]*=[[:space:]]*1$" mysql/conf.d/001-server.c
     echo "This is master server already"
     exit 1
 fi
-if [ ! -f mysql.env ]; then
-    echo "mysql.env not found exit"
-    exit 1
-fi
 #confirmation
 read -p "Are you sure to convert this server to primary? (y/n) " -r
 if [[ ! $REPLY =~ ^[Yy]$ ]]
@@ -24,7 +20,7 @@ then
     echo "cancelled"
     exit 1
 fi
-source ./mysql.env
+source ./env.sh
 docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "STOP REPLICA; RESET REPLICA; SHOW SLAVE STATUS\G"
 echo "Change server id to 1"
 sed -i "s/server-id[[:space:]]*=[[:space:]]*[^ ]*/server-id = 1/g" mysql/conf.d/001-server.cnf

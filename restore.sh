@@ -8,10 +8,6 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 # Navigate to the script's directory
 cd "$SCRIPT_DIR" || exit
 
-if [ ! -f mysql.env ]; then
-  echo "mysql.env not found"
-  exit 1
-fi
 root_password=""
 source ./env.sh
 restore_file=""

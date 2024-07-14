@@ -110,8 +110,8 @@ fi
 #update mysql root host
 #read docker-compose.yml file for root host
 root_host=$IP_ADDRESS_PREFIX.%
-sed -i "s/MYSQL_ROOT_HOST=.*/MYSQL_ROOT_HOST=\"$root_host\"/" mysql.env
-sed -i "s/MYSQL_HOST=.*/MYSQL_HOST=\"$root_host\"/" mysql.env
+echo "MYSQL_ROOT_HOST=\"$root_host\"" >> .env
+echo "MYSQL_HOST=\"$root_host\"" >> .env
 
 #echo "Generate random password for MYSQL_ROOT_PASSWORD"
 if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
