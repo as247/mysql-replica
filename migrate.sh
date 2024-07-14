@@ -12,7 +12,7 @@ FOLDER_NAME=$(basename "$SCRIPT_DIR")
 
 source ./env.sh
 externalIP=$(curl -s4 ifconfig.me)
-echo "Update REPLICA_HOST to $externalIP"
+
 if [ "$1" == "master" ]; then
     #get master status as update query
     MYSQL_OUTPUT=$(docker compose exec -T db mysql -u root -p"$root_password" -e "SHOW MASTER STATUS\G")
@@ -34,10 +34,11 @@ backup_file="mysql/init/150-import-$MYSQL_DATABASE.sql"
 docker compose exec -T db mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --single-transaction --complete-insert --source-data=1 "$MYSQL_DATABASE" > "$backup_file"
 gzip -f "$backup_file"
 echo "Backup done"
-
+echo "Update REPLICA_HOST to $externalIP"
 sed -i "s/MYSQL_REPLICA_HOST=.*/MYSQL_REPLICA_HOST=\"$externalIP\"/" .env
 echo "Update REPLICA_PORT to $MYSQL_PORT"
 sed -i "s/MYSQL_REPLICA_PORT=.*/MYSQL_REPLICA_PORT=\"$MYSQL_PORT\"/" .env
 
 echo "Creating package for slave"
-tar -zcvf "../$FOLDER_NAME.tar.gz" --exclude=mysql/data --exclude=mysql/log --exclude=backup --exclude=.idea -C .. "$FOLDER_NAME"
+tar -zcf "../$FOLDER_NAME.tar.gz" --exclude=mysql/data --exclude=mysql/log --exclude=backup --exclude=.idea -C .. "$FOLDER_NAME"
+echo "Package created: $FOLDER_NAME.tar.gz"
