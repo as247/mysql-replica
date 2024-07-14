@@ -82,8 +82,7 @@ if [ -z "$PHPMYADMIN_PORT" ]; then
     PHPMYADMIN_PORT=$PHPMYADMIN_DEFAULT_PORT
   fi
 fi
-#confirm mysql port and phpmyadmin port
-echo "MYSQL_PORT=$MYSQL_PORT"
+
 if [ $PHPMYADMIN_PORT -ne 0 ]; then
   echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT"
 else
@@ -161,10 +160,17 @@ fi
 
 chown -R 999:999 mysql/data
 chown -R 999:999 mysql/log
-echo "Mysql replica is ready"
+echo "Mysql prepared"
 echo "You can start the mysql server by running 'docker compose up -d'"
+echo "********************************************************"
+echo "Public port: $MYSQL_PORT"
 echo "Root password: $MYSQL_ROOT_PASSWORD"
-echo "Password: $MYSQL_PASSWORD"
+echo "*********************************************************"
+echo "* Host: $IP_ADDRESS_PREFIX.2"
+echo "* Name: $MYSQL_DATABASE"
+echo "* User: $MYSQL_USER"
+echo "* Pass: $MYSQL_PASSWORD"
+echo "*********************************************************"
 
 # rename init/100-set-replica.sql.txt to init/100-set-replica.sql if server id in conf.d/001-server.cnf is not 1
 #if [ "$(grep -c "server-id[[:space:]]*=[[:space:]]*1" conf.d/001-server.cnf)" -eq 0 ]; then
