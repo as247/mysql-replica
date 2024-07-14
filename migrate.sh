@@ -36,9 +36,9 @@ docker compose exec -T db mysqldump -u root -p"$root_password" --single-transact
 gzip -f "$backup_file"
 echo "Backup done"
 
-sed -i "s/MYSQL_REPLICA_HOST=.*/MYSQL_REPLICA_HOST=\"$externalIP\"/" mysql.env
+sed -i "s/MYSQL_REPLICA_HOST=.*/MYSQL_REPLICA_HOST=\"$externalIP\"/" .env
 echo "Update REPLICA_PORT to $MYSQL_PORT"
-sed -i "s/MYSQL_REPLICA_PORT=.*/MYSQL_REPLICA_PORT=\"$MYSQL_PORT\"/" mysql.env
+sed -i "s/MYSQL_REPLICA_PORT=.*/MYSQL_REPLICA_PORT=\"$MYSQL_PORT\"/" .env
 
 echo "Creating package for slave"
 tar -zcvf "../$FOLDER_NAME.tar.gz" --exclude=mysql/data --exclude=mysql/log --exclude=backup --exclude=.idea -C .. "$FOLDER_NAME"

@@ -99,30 +99,50 @@ echo "IP_ADDRESS_PREFIX=$IP_ADDRESS_PREFIX" >> .env
 if [ "$PHPMYADMIN_PORT" -ne 0 ]; then
   echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT" >> .env
 fi
-
-if [ ! -f mysql.env ]; then
-  echo "mysql.env not found, copying from mysql.env.example"
-  cp mysql.env.example mysql.env
-  #echo "Generate random password for MYSQL_ROOT_PASSWORD"
-  root_password=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
-  sed -i "s/MYSQL_ROOT_PASSWORD=.*/MYSQL_ROOT_PASSWORD=\"$root_password\"/" mysql.env
+echo "MYSQL_REPLICA_HOST=" >> .env
+echo "MYSQL_REPLICA_PORT=" >> .env
   #echo "Generate random password for MYSQL_REPLICA_PASSWORD"
-  replica_password=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
-  sed -i "s/MYSQL_REPLICA_PASSWORD=.*/MYSQL_REPLICA_PASSWORD=\"$replica_password\"/" mysql.env
-  #echo "Generate random password for MYSQL_PASSWORD"
-  password=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
-  sed -i "s/MYSQL_PASSWORD=.*/MYSQL_PASSWORD=\"$password\"/" mysql.env
-  #update mysql root host
-  #read docker-compose.yml file for root host
-  root_host=$IP_ADDRESS_PREFIX.%
-  sed -i "s/MYSQL_ROOT_HOST=.*/MYSQL_ROOT_HOST=\"$root_host\"/" mysql.env
-  sed -i "s/MYSQL_HOST=.*/MYSQL_HOST=\"$root_host\"/" mysql.env
-else
-  source ./mysql.env
-  root_password="$MYSQL_ROOT_PASSWORD"
-  replica_password="$MYSQL_REPLICA_PASSWORD"
-  password="$MYSQL_PASSWORD"
+if [ -z "$MYSQL_REPLICA_PASSWORD" ]; then
+  MYSQL_REPLICA_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
+  echo "MYSQL_REPLICA_PASSWORD=\"$MYSQL_REPLICA_PASSWORD\"" >> .env
 fi
+
+#update mysql root host
+#read docker-compose.yml file for root host
+root_host=$IP_ADDRESS_PREFIX.%
+sed -i "s/MYSQL_ROOT_HOST=.*/MYSQL_ROOT_HOST=\"$root_host\"/" mysql.env
+sed -i "s/MYSQL_HOST=.*/MYSQL_HOST=\"$root_host\"/" mysql.env
+
+#echo "Generate random password for MYSQL_ROOT_PASSWORD"
+if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
+  MYSQL_ROOT_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
+  echo "MYSQL_ROOT_PASSWORD=\"$MYSQL_ROOT_PASSWORD\"" >> .env
+fi
+
+#set MYSQL_DATABASE
+if [ -z "$MYSQL_DATABASE" ]; then
+  read -p "Enter mysql database name (default mydb): " MYSQL_DATABASE
+  if [ -z "$MYSQL_DATABASE" ]; then
+    MYSQL_DATABASE="mydb"
+  fi
+  echo "MYSQL_DATABASE=\"$MYSQL_DATABASE\"" >> .env
+fi
+#set MYSQL_USER
+if [ -z "$MYSQL_USER" ]; then
+  read -p "Enter mysql user name (default myuser): " MYSQL_USER
+  if [ -z "$MYSQL_USER" ]; then
+    MYSQL_USER="myuser"
+  fi
+  echo "MYSQL_USER=\"$MYSQL_USER\"" >> .env
+fi
+  #echo "Generate random password for MYSQL_PASSWORD"
+if [ -z "$MYSQL_PASSWORD" ]; then
+  MYSQL_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
+  echo "MYSQL_PASSWORD=\"$MYSQL_PASSWORD\"" >> .env
+fi
+
+
+
 
 mkdir -p mysql/data
 mkdir -p mysql/log
