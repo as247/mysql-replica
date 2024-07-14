@@ -1,6 +1,8 @@
 services:
   db:
     image: ${MYSQL_IMAGE}
+    env_file:
+      - .env
     restart: always
     ports:
       - ${MYSQL_PORT}:3306
