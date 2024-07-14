@@ -8,7 +8,6 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 # Navigate to the script's directory
 cd "$SCRIPT_DIR" || exit
 
-root_password=""
 source ./env.sh
 mkdir -p backup
 #check backup file from argument
@@ -23,7 +22,7 @@ else
 fi
 
 
-docker compose exec -T db mysqldump -u root -p"$root_password" --single-transaction --complete-insert "$MYSQL_DATABASE" | gzip -c > "$backup_file"
+docker compose exec -T db mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --single-transaction --complete-insert "$MYSQL_DATABASE" | gzip -c > "$backup_file"
 echo "Backup saved to $backup_file"
 #clean old backups
 find backup -type f -mtime +7 -name '*.gz' -delete

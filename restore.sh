@@ -8,7 +8,6 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 # Navigate to the script's directory
 cd "$SCRIPT_DIR" || exit
 
-root_password=""
 source ./env.sh
 restore_file=""
 if [ -z "$1" ]; then
@@ -25,12 +24,12 @@ echo "Restore $restore_file"
 #drop all tables
 echo "Drop all tables"
 dropTables_file="mysql/helpers/droptables.sql"
-docker compose exec -T db mysql -u root -p"$root_password" "$MYSQL_DATABASE" < "$dropTables_file"
+docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < "$dropTables_file"
 echo "Restoring"
 #check if file is gzip
 if [[ "$restore_file" == *.gz ]]; then
-  gunzip -c "$restore_file" | docker compose exec -T db mysql -u root -p"$root_password" "$MYSQL_DATABASE"
+  gunzip -c "$restore_file" | docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"
 else
-  docker compose exec -T db mysql -u root -p"$root_password" "$MYSQL_DATABASE" < "$restore_file"
+  docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < "$restore_file"
 fi
 echo "Restore done"

@@ -10,7 +10,6 @@ cd "$SCRIPT_DIR" || exit
 # Folder name without the path
 FOLDER_NAME=$(basename "$SCRIPT_DIR")
 
-root_password=""
 source ./env.sh
 externalIP=$(curl -s4 ifconfig.me)
 echo "Update REPLICA_HOST to $externalIP"
@@ -32,7 +31,7 @@ fi
 
 echo "Backing up $MYSQL_DATABASE for slave"
 backup_file="mysql/init/150-import-$MYSQL_DATABASE.sql"
-docker compose exec -T db mysqldump -u root -p"$root_password" --single-transaction --complete-insert --source-data=1 $MYSQL_DATABASE > $backup_file
+docker compose exec -T db mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --single-transaction --complete-insert --source-data=1 "$MYSQL_DATABASE" > "$backup_file"
 gzip -f "$backup_file"
 echo "Backup done"
 
