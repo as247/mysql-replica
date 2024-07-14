@@ -52,6 +52,15 @@ if [ -z "$MYSQL_PORT" ]; then
     MYSQL_PORT=$MYSQL_DEFAULT_PORT
   fi
 fi
+
+#Ask for ip address prefix if not set
+if [ -z "$IP_ADDRESS_PREFIX" ]; then
+  read -p "Enter ip address prefix (default 172.20.0): " IP_ADDRESS_PREFIX
+  if [ -z "$IP_ADDRESS_PREFIX" ]; then
+    IP_ADDRESS_PREFIX="172.20.0"
+  fi
+fi
+
 #Ask if user want to use phpmyadmin
 read -p "Do you want to use phpmyadmin? (y/n) " -r
 if [[ $REPLY =~ ^[Yy]$ ]]
@@ -104,9 +113,9 @@ if [ ! -f mysql.env ]; then
   sed -i "s/MYSQL_PASSWORD=.*/MYSQL_PASSWORD=\"$password\"/" mysql.env
   #update mysql root host
   #read docker-compose.yml file for root host
-  root_host=$(grep -oP '(?<=subnet: ).*' docker-compose.yml | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | awk -F. '{print $1"."$2"."$3".%"}')
+  root_host=$IP_ADDRESS_PREFIX.%
   sed -i "s/MYSQL_ROOT_HOST=.*/MYSQL_ROOT_HOST=\"$root_host\"/" mysql.env
-
+  sed -i "s/MYSQL_HOST=.*/MYSQL_HOST=\"$root_host\"/" mysql.env
 fi
 
 mkdir -p mysql/data
