@@ -91,31 +91,16 @@ else
   sed -i '/#phpmyadmin-start/,/#phpmyadmin-end/d' docker-compose.yml
 fi
 
-#Write to .env file
-echo "MYSQL_IMAGE=$MYSQL_IMAGE" > .env
-echo "MYSQL_PORT=$MYSQL_PORT" >> .env
-echo "IP_ADDRESS_PREFIX=$IP_ADDRESS_PREFIX" >> .env
-if [ "$PHPMYADMIN_PORT" -ne 0 ]; then
-  echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT" >> .env
-fi
-echo "MYSQL_REPLICA_HOST=" >> .env
-echo "MYSQL_REPLICA_PORT=" >> .env
+
   #echo "Generate random password for MYSQL_REPLICA_PASSWORD"
 if [ -z "$MYSQL_REPLICA_PASSWORD" ]; then
   MYSQL_REPLICA_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
-  echo "MYSQL_REPLICA_PASSWORD=\"$MYSQL_REPLICA_PASSWORD\"" >> .env
-fi
 
-#update mysql root host
-#read docker-compose.yml file for root host
-root_host=$IP_ADDRESS_PREFIX.%
-echo "MYSQL_ROOT_HOST=\"$root_host\"" >> .env
-echo "MYSQL_HOST=\"$root_host\"" >> .env
+fi
 
 #echo "Generate random password for MYSQL_ROOT_PASSWORD"
 if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
   MYSQL_ROOT_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
-  echo "MYSQL_ROOT_PASSWORD=\"$MYSQL_ROOT_PASSWORD\"" >> .env
 fi
 
 #set MYSQL_DATABASE
@@ -124,7 +109,6 @@ if [ -z "$MYSQL_DATABASE" ]; then
   if [ -z "$MYSQL_DATABASE" ]; then
     MYSQL_DATABASE="mydb"
   fi
-  echo "MYSQL_DATABASE=\"$MYSQL_DATABASE\"" >> .env
 fi
 #set MYSQL_USER
 if [ -z "$MYSQL_USER" ]; then
@@ -132,15 +116,32 @@ if [ -z "$MYSQL_USER" ]; then
   if [ -z "$MYSQL_USER" ]; then
     MYSQL_USER="myuser"
   fi
-  echo "MYSQL_USER=\"$MYSQL_USER\"" >> .env
 fi
   #echo "Generate random password for MYSQL_PASSWORD"
 if [ -z "$MYSQL_PASSWORD" ]; then
   MYSQL_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
-  echo "MYSQL_PASSWORD=\"$MYSQL_PASSWORD\"" >> .env
 fi
 
 
+MYSQL_ROOT_HOST=$IP_ADDRESS_PREFIX.%
+MYSQL_HOST=$IP_ADDRESS_PREFIX.%
+#Write to .env file
+echo "MYSQL_IMAGE=$MYSQL_IMAGE" > .env
+echo "MYSQL_PORT=$MYSQL_PORT" >> .env
+echo "IP_ADDRESS_PREFIX=$IP_ADDRESS_PREFIX" >> .env
+if [ "$PHPMYADMIN_PORT" -ne 0 ]; then
+  echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT" >> .env
+fi
+echo "MYSQL_ROOT_HOST=\"$MYSQL_ROOT_HOST\"" >> .env
+echo "MYSQL_HOST=\"$MYSQL_HOST\"" >> .env
+echo "MYSQL_REPLICA_HOST=" >> .env
+echo "MYSQL_REPLICA_PORT=" >> .env
+echo "MYSQL_REPLICA_USER=repl_user" >> .env
+echo "MYSQL_REPLICA_PASSWORD=\"$MYSQL_REPLICA_PASSWORD\"" >> .env
+echo "MYSQL_ROOT_PASSWORD=\"$MYSQL_ROOT_PASSWORD\"" >> .env
+echo "MYSQL_DATABASE=\"$MYSQL_DATABASE\"" >> .env
+echo "MYSQL_USER=\"$MYSQL_USER\"" >> .env
+echo "MYSQL_PASSWORD=\"$MYSQL_PASSWORD\"" >> .env
 
 mkdir -p mysql/data
 mkdir -p mysql/log
