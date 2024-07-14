@@ -62,12 +62,14 @@ if [ -z "$IP_ADDRESS_PREFIX" ]; then
 fi
 
 #Ask if user want to use phpmyadmin
-read -p "Do you want to use phpmyadmin? (y/n) " -r
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-    PHPMYADMIN_PORT=""
-else
-    PHPMYADMIN_PORT=0
+if [ -z "$PHPMYADMIN_PORT" ]; then
+  read -p "Do you want to use phpmyadmin? (y/n) " -r
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+      PHPMYADMIN_PORT=""
+  else
+      PHPMYADMIN_PORT=0
+  fi
 fi
 #if PHPMYADMIN_PORT is not set then set it to 8801
 if [ -z "$PHPMYADMIN_PORT" ]; then
@@ -129,9 +131,7 @@ MYSQL_HOST=$IP_ADDRESS_PREFIX.%
 echo "MYSQL_IMAGE=$MYSQL_IMAGE" > .env
 echo "MYSQL_PORT=$MYSQL_PORT" >> .env
 echo "IP_ADDRESS_PREFIX=$IP_ADDRESS_PREFIX" >> .env
-if [ "$PHPMYADMIN_PORT" -ne 0 ]; then
-  echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT" >> .env
-fi
+echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT" >> .env
 echo "MYSQL_ROOT_HOST=\"$MYSQL_ROOT_HOST\"" >> .env
 echo "MYSQL_HOST=\"$MYSQL_HOST\"" >> .env
 echo "MYSQL_REPLICA_HOST=" >> .env
