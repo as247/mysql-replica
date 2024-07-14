@@ -2,7 +2,7 @@
 
 if [ -n "$MYSQL_ROOT_PASSWORD" ] && [ -n "$MYSQL_REPLICA_USER" ] && [ -n "$MYSQL_REPLICA_PASSWORD" ]; then
   echo "Creating replica user"
-  mysql -u root -p"$MYSQL_ROOT_PASSWORD"\
+  mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD"\
    -e "
    SET SQL_LOG_BIN=0;
    CREATE USER '$MYSQL_REPLICA_USER'@'%' IDENTIFIED WITH mysql_native_password BY '$MYSQL_REPLICA_PASSWORD';

@@ -11,7 +11,7 @@ cd "$SCRIPT_DIR" || exit
 source ./env.sh
 if [ "$1" == "master" ]; then
   #get master status as update query
-  docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "SHOW MASTER STATUS\G"
+  docker compose exec -T db mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" -e "SHOW MASTER STATUS\G"
 else
-  docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "SHOW REPLICA STATUS\G"
+  docker compose exec -T db mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" -e "SHOW REPLICA STATUS\G"
 fi

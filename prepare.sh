@@ -133,7 +133,6 @@ echo "MYSQL_PORT=$MYSQL_PORT" >> .env
 echo "IP_ADDRESS_PREFIX=$IP_ADDRESS_PREFIX" >> .env
 echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT" >> .env
 echo "MYSQL_ROOT_HOST=\"$MYSQL_ROOT_HOST\"" >> .env
-echo "MYSQL_HOST=\"$MYSQL_HOST\"" >> .env
 echo "MYSQL_REPLICA_HOST=" >> .env
 echo "MYSQL_REPLICA_PORT=" >> .env
 echo "MYSQL_REPLICA_USER=repl_user" >> .env
