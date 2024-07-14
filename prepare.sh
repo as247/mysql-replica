@@ -124,17 +124,16 @@ if [ -z "$MYSQL_PASSWORD" ]; then
   MYSQL_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
 fi
 
-
 MYSQL_ROOT_HOST=$IP_ADDRESS_PREFIX.%
-MYSQL_HOST=$IP_ADDRESS_PREFIX.%
+
 #Write to .env file
 echo "MYSQL_IMAGE=$MYSQL_IMAGE" > .env
 echo "MYSQL_PORT=$MYSQL_PORT" >> .env
 echo "IP_ADDRESS_PREFIX=$IP_ADDRESS_PREFIX" >> .env
 echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT" >> .env
 echo "MYSQL_ROOT_HOST=\"$MYSQL_ROOT_HOST\"" >> .env
-echo "MYSQL_REPLICA_HOST=" >> .env
-echo "MYSQL_REPLICA_PORT=" >> .env
+echo "MYSQL_REPLICA_HOST=\"$MYSQL_REPLICA_HOST\"" >> .env
+echo "MYSQL_REPLICA_PORT=\"$MYSQL_REPLICA_PORT\"" >> .env
 echo "MYSQL_REPLICA_USER=repl_user" >> .env
 echo "MYSQL_REPLICA_PASSWORD=\"$MYSQL_REPLICA_PASSWORD\"" >> .env
 echo "MYSQL_ROOT_PASSWORD=\"$MYSQL_ROOT_PASSWORD\"" >> .env
