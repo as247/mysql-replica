@@ -117,6 +117,11 @@ if [ ! -f mysql.env ]; then
   root_host=$IP_ADDRESS_PREFIX.%
   sed -i "s/MYSQL_ROOT_HOST=.*/MYSQL_ROOT_HOST=\"$root_host\"/" mysql.env
   sed -i "s/MYSQL_HOST=.*/MYSQL_HOST=\"$root_host\"/" mysql.env
+else
+  source ./mysql.env
+  root_password="$MYSQL_ROOT_PASSWORD"
+  replica_password="$MYSQL_REPLICA_PASSWORD"
+  password="$MYSQL_PASSWORD"
 fi
 
 mkdir -p mysql/data
