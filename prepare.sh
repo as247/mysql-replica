@@ -71,12 +71,12 @@ if [ -z "$PHPMYADMIN_PORT" ]; then
       PHPMYADMIN_PORT=0
   fi
 fi
-#if PHPMYADMIN_PORT is not set then set it to 8801
+#if PHPMYADMIN_PORT is not set then set it to 8800
 if [ -z "$PHPMYADMIN_PORT" ]; then
   #ask for phpmyadmin port
-  PHPMYADMIN_DEFAULT_PORT=$(find_free_port 8802 9000)
+  PHPMYADMIN_DEFAULT_PORT=$(find_free_port 8800 9000)
   if [ $? -ne 0 ]; then
-    echo "No free port found in the range 8802-9000"
+    echo "No free port found in the range 8800-9000"
     exit 1
   fi
   read -p "Enter phpmyadmin port (default $PHPMYADMIN_DEFAULT_PORT): " PHPMYADMIN_PORT
