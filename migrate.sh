@@ -38,7 +38,10 @@ echo "Update REPLICA_HOST to $externalIP"
 sed -i "s/MYSQL_REPLICA_HOST=.*/MYSQL_REPLICA_HOST=\"$externalIP\"/" .env
 echo "Update REPLICA_PORT to $MYSQL_PORT"
 sed -i "s/MYSQL_REPLICA_PORT=.*/MYSQL_REPLICA_PORT=\"$MYSQL_PORT\"/" .env
-
+echo "Remove port mapping for slave. Slave should not be accessible from outside."
+#remove db ports from docker-compose.yml
+#remove string between #dbports-start and #dbports-end
+sed -i '/#dbports-start/,/#dbports-end/d' docker-compose.yml
 echo "Creating package for slave"
 tar -zcf "../$FOLDER_NAME.tar.gz" --exclude=mysql/data --exclude=mysql/log --exclude=backup --exclude=.idea -C .. "$FOLDER_NAME"
 echo "Package created: $FOLDER_NAME.tar.gz"

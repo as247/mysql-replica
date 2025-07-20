@@ -4,8 +4,10 @@ services:
     env_file:
       - .env
     restart: always
+#dbports-start
     ports:
       - ${MYSQL_PORT}:3306
+#dbports-end
     volumes:
       - ./mysql/data/mysql:/var/lib/mysql
       - ./mysql/data/log:/var/log/mysql
