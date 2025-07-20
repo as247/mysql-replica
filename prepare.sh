@@ -87,10 +87,21 @@ fi
 
 if [ $PHPMYADMIN_PORT -ne 0 ]; then
   echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT"
+  echo "Enable phpmyadmin in docker-compose.yml"
+  # Uncomment only lines between #phpmyadmin-start and #phpmyadmin-end
+  sed -i '/#phpmyadmin-start/,/#phpmyadmin-end/ {
+    /#phpmyadmin-start/b
+    /#phpmyadmin-end/b
+    s/^\([[:space:]]*\)#/\1/
+  }' docker-compose.yml
 else
-  #remove phpmyadmin from docker-compose.yml
-  #remove string between #phpmyadmin-start and #phpmyadmin-end
-  sed -i '/#phpmyadmin-start/,/#phpmyadmin-end/d' docker-compose.yml
+  echo "Disable phpmyadmin in docker-compose.yml"
+  # Comment only lines between #phpmyadmin-start and #phpmyadmin-end
+  sed -i '/#phpmyadmin-start/,/#phpmyadmin-end/ {
+    /#phpmyadmin-start/b
+    /#phpmyadmin-end/b
+    s/^\([[:space:]]*\)\([^#[:space:]]\)/\1#\2/
+  }' docker-compose.yml
 fi
 
 
