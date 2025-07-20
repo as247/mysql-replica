@@ -42,6 +42,7 @@ find_free_port() {
 if [ $isReset == "yes" ]; then
   echo "Regenerate passwords"
   if [ $MYSQL_PORT -ne 0 ]; then
+    #Mysql port is set, so we need to reset it
     MYSQL_PORT=""
   fi
   MYSQL_REPLICA_PASSWORD=""
@@ -66,24 +67,7 @@ if [ -z "$MYSQL_PORT" ]; then
   fi
 fi
 
-if [ $MYSQL_PORT -ne 0 ]; then
-  echo "Expose mysql on port $MYSQL_PORT"
-  # Uncomment only lines between #dbports-start and #dbports-end
-    sed -i '/#dbports-start/,/#dbports-end/ {
-      /#dbports-start/b
-      /#dbports-end/b
-      s/^\([[:space:]]*\)#/\1/
-    }' docker-compose.yml
 
-else
-  echo "Disable mysql port mapping in docker-compose.yml"
-  # Comment only lines between #dbports-start and #dbports-end
-    sed -i '/#dbports-start/,/#dbports-end/ {
-      /#dbports-start/b
-      /#dbports-end/b
-      s/^\([[:space:]]*\)\([^#[:space:]]\)/\1#\2/
-    }' docker-compose.yml
-fi
 
 #Ask for ip address prefix if not set
 if [ -z "$IP_ADDRESS_PREFIX" ]; then
@@ -105,6 +89,7 @@ if [ -z "$PHPMYADMIN_PORT" ]; then
 fi
 if [ $isReset == "yes" ]; then
   if [ $PHPMYADMIN_PORT -ne 0 ]; then
+      #PhpMyAdmin port is set, so we need to reset it
       PHPMYADMIN_PORT=""
   fi
 fi
@@ -120,6 +105,56 @@ if [ -z "$PHPMYADMIN_PORT" ]; then
   if [ -z "$PHPMYADMIN_PORT" ]; then
     PHPMYADMIN_PORT=$PHPMYADMIN_DEFAULT_PORT
   fi
+fi
+
+
+#set MYSQL_DATABASE
+if [ -z "$MYSQL_DATABASE" ]; then
+  read -p "Enter mysql database name (default mydb): " MYSQL_DATABASE
+  if [ -z "$MYSQL_DATABASE" ]; then
+    MYSQL_DATABASE="mydb"
+  fi
+fi
+#set MYSQL_USER
+if [ -z "$MYSQL_USER" ]; then
+  read -p "Enter mysql user name (default myuser): " MYSQL_USER
+  if [ -z "$MYSQL_USER" ]; then
+    MYSQL_USER="myuser"
+  fi
+fi
+
+#echo "Generate random password for MYSQL_REPLICA_PASSWORD"
+if [ -z "$MYSQL_REPLICA_PASSWORD" ]; then
+  MYSQL_REPLICA_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
+
+fi
+#echo "Generate random password for MYSQL_ROOT_PASSWORD"
+if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
+  MYSQL_ROOT_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
+fi
+
+#echo "Generate random password for MYSQL_PASSWORD"
+if [ -z "$MYSQL_PASSWORD" ]; then
+  MYSQL_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
+fi
+
+if [ $MYSQL_PORT -ne 0 ]; then
+  echo "Expose mysql on port $MYSQL_PORT"
+  # Uncomment only lines between #dbports-start and #dbports-end
+    sed -i '/#dbports-start/,/#dbports-end/ {
+      /#dbports-start/b
+      /#dbports-end/b
+      s/^\([[:space:]]*\)#/\1/
+    }' docker-compose.yml
+
+else
+  echo "Disable mysql port mapping in docker-compose.yml"
+  # Comment only lines between #dbports-start and #dbports-end
+    sed -i '/#dbports-start/,/#dbports-end/ {
+      /#dbports-start/b
+      /#dbports-end/b
+      s/^\([[:space:]]*\)\([^#[:space:]]\)/\1#\2/
+    }' docker-compose.yml
 fi
 
 if [ $PHPMYADMIN_PORT -ne 0 ]; then
@@ -141,35 +176,7 @@ else
 fi
 
 
-#echo "Generate random password for MYSQL_REPLICA_PASSWORD"
-if [ -z "$MYSQL_REPLICA_PASSWORD" ]; then
-  MYSQL_REPLICA_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
 
-fi
-#echo "Generate random password for MYSQL_ROOT_PASSWORD"
-if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
-  MYSQL_ROOT_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
-fi
-
-#echo "Generate random password for MYSQL_PASSWORD"
-if [ -z "$MYSQL_PASSWORD" ]; then
-  MYSQL_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
-fi
-
-#set MYSQL_DATABASE
-if [ -z "$MYSQL_DATABASE" ]; then
-  read -p "Enter mysql database name (default mydb): " MYSQL_DATABASE
-  if [ -z "$MYSQL_DATABASE" ]; then
-    MYSQL_DATABASE="mydb"
-  fi
-fi
-#set MYSQL_USER
-if [ -z "$MYSQL_USER" ]; then
-  read -p "Enter mysql user name (default myuser): " MYSQL_USER
-  if [ -z "$MYSQL_USER" ]; then
-    MYSQL_USER="myuser"
-  fi
-fi
 
 mkdir -p mysql/data/mysql
 mkdir -p mysql/data/log
