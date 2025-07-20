@@ -8,11 +8,13 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 #make script directory absolute
 SCRIPT_DIR=$(realpath "$SCRIPT_DIR")
 
-source $SCRIPT_DIR/env.sh
+source "$SCRIPT_DIR/env.sh"
 #check backup file from argument
+cleanup_file=""
 if [ -z "$1" ]; then
-  mkdir -p $SCRIPT_DIR/backup
+  mkdir -p "$SCRIPT_DIR/backup"
   backup_file="$SCRIPT_DIR/backup/$(date +%Y%m%d_%H%M%S)-$MYSQL_DATABASE.sql.gz"
+  cleanup_file="yes"
 else
   backup_file="$1"
   #if file name not end with .gz then add it
@@ -24,5 +26,8 @@ fi
 
 docker compose exec -T db mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --single-transaction --complete-insert "$MYSQL_DATABASE" | gzip -c > "$backup_file"
 echo "Backup saved to $backup_file"
-#clean old backups
-find backup -type f -mtime +7 -name '*.gz' -delete
+if [ -n "$cleanup_file" ]; then
+  echo "Cleanup old backups"
+  # delete files older than 7 days
+  find "$SCRIPT_DIR/backup" -type f -mtime +7 -name '*.sql.gz' -delete
+fi
