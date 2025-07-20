@@ -7,7 +7,7 @@ fi
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 SCRIPT_DIR=$(realpath "$SCRIPT_DIR")
 
-source $SCRIPT_DIR/env.sh
+source "$SCRIPT_DIR/env.sh"
 restore_file=""
 if [ -z "$1" ]; then
   echo "Usage: restore.sh <backup_file>"
@@ -22,7 +22,7 @@ fi
 echo "Restore $restore_file"
 #drop all tables
 echo "Drop all tables"
-dropTables_file="mysql/helpers/droptables.sql"
+dropTables_file="$SCRIPT_DIR/mysql/helpers/droptables.sql"
 docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < "$dropTables_file"
 echo "Restoring"
 #check if file is gzip
