@@ -24,15 +24,8 @@ source ./env.sh
 docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "STOP REPLICA; RESET REPLICA; SHOW SLAVE STATUS\G"
 echo "Change server id to 1"
 sed -i "s/server-id[[:space:]]*=[[:space:]]*[^ ]*/server-id = 1/g" mysql/conf.d/001-server.cnf
-
-# Uncomment only lines between #dbports-start and #dbports-end
-sed -i '/#dbports-start/,/#dbports-end/ {
-  /#dbports-start/b
-  /#dbports-end/b
-  s/^\([[:space:]]*\)#/\1/
-}' docker-compose.yml
-
+sed -i "s/MYSQL_PORT=.*/MYSQL_PORT=/" .env
 
 echo "Restart"
-docker compose restart
+docker compose up -d --force-recreate
 

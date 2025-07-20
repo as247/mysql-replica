@@ -53,6 +53,24 @@ if [ -z "$MYSQL_PORT" ]; then
   fi
 fi
 
+if [ $MYSQL_PORT -ne 0 ]; then
+  echo "Expose mysql on port $MYSQL_PORT"
+  # Comment only lines between #dbports-start and #dbports-end
+  sed -i '/#dbports-start/,/#dbports-end/ {
+    /#dbports-start/b
+    /#dbports-end/b
+    s/^\([[:space:]]*\)\([^#[:space:]]\)/\1#\2/
+  }' docker-compose.yml
+else
+  echo "Disable mysql port mapping in docker-compose.yml"
+  # Uncomment only lines between #dbports-start and #dbports-end
+  sed -i '/#dbports-start/,/#dbports-end/ {
+    /#dbports-start/b
+    /#dbports-end/b
+    s/^\([[:space:]]*\)#/\1/
+  }' docker-compose.yml
+fi
+
 #Ask for ip address prefix if not set
 if [ -z "$IP_ADDRESS_PREFIX" ]; then
   read -p "Enter ip address prefix (default 172.20.0): " IP_ADDRESS_PREFIX
