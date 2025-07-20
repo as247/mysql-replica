@@ -13,6 +13,10 @@ if [ ! -f docker-compose.yml ]; then
   cp docker-compose-sample.yml docker-compose.yml
 fi
 architecture=$(uname -m)
+isReset="no"
+if [ "$1" == "--reset" ]; then
+  isReset="yes"
+fi
 passwordLength=20
 if [ "$architecture" == "x86_64" ]; then
   MYSQL_IMAGE="mysql:8.0.40-debian"
@@ -122,16 +126,25 @@ else
   }' docker-compose.yml
 fi
 
-
-  #echo "Generate random password for MYSQL_REPLICA_PASSWORD"
+if [ $isReset == "yes" ]; then
+  echo "Regenerate passwords"
+  MYSQL_REPLICA_PASSWORD=""
+  MYSQL_ROOT_PASSWORD=""
+  MYSQL_PASSWORD=""
+fi
+#echo "Generate random password for MYSQL_REPLICA_PASSWORD"
 if [ -z "$MYSQL_REPLICA_PASSWORD" ]; then
   MYSQL_REPLICA_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
 
 fi
-
 #echo "Generate random password for MYSQL_ROOT_PASSWORD"
 if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
   MYSQL_ROOT_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
+fi
+
+#echo "Generate random password for MYSQL_PASSWORD"
+if [ -z "$MYSQL_PASSWORD" ]; then
+  MYSQL_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
 fi
 
 #set MYSQL_DATABASE
@@ -148,10 +161,23 @@ if [ -z "$MYSQL_USER" ]; then
     MYSQL_USER="myuser"
   fi
 fi
-  #echo "Generate random password for MYSQL_PASSWORD"
-if [ -z "$MYSQL_PASSWORD" ]; then
-  MYSQL_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
+
+mkdir -p mysql/data/mysql
+mkdir -p mysql/data/log
+# Check if data and log dir empty or not if not empty then try to empty it with confirmation
+if [ "$(ls -A mysql/data/mysql)" ]; then
+    if [ "$isReset" == "yes" ]; then
+        echo "Resetting data/mysql and data/log directories"
+        docker compose down
+        rm -rf mysql/data/*
+        mkdir -p mysql/data/mysql
+        mkdir -p mysql/data/log
+    else
+        echo "Data directory is not empty, if you want to empty it run this script again with --reset option"
+    fi
 fi
+
+chown -R 999:999 mysql/data
 
 MYSQL_ROOT_HOST=$IP_ADDRESS_PREFIX.%
 
@@ -170,22 +196,7 @@ echo "MYSQL_DATABASE=\"$MYSQL_DATABASE\"" >> .env
 echo "MYSQL_USER=\"$MYSQL_USER\"" >> .env
 echo "MYSQL_PASSWORD=\"$MYSQL_PASSWORD\"" >> .env
 
-mkdir -p mysql/data/mysql
-mkdir -p mysql/data/log
-# Check if data and log dir empty or not if not empty then try to empty it with confirmation
-if [ "$(ls -A mysql/data/mysql)" ]; then
-    if [ "$1" == "--reset" ]; then
-        echo "Resetting data/mysql and data/log directories"
-        docker compose down
-        rm -rf mysql/data/*
-        mkdir -p mysql/data/mysql
-        mkdir -p mysql/data/log
-    else
-        echo "Data directory is not empty, if you want to empty it run this script again with --reset option"
-    fi
-fi
 
-chown -R 999:999 mysql/data
 # Color ANSI
 RED='\033[0;31m'
 GREEN='\033[0;32m'
