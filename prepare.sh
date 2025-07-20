@@ -200,8 +200,7 @@ echo "* Pass: $MYSQL_PASSWORD"
 echo "*********************************************************"
 if [ $PHPMYADMIN_PORT -ne 0 ]; then
   echo "PhpMyAdmin is enabled on port $PHPMYADMIN_PORT"
-  PUBLIC_IP=$(curl -s4 ifconfig.me)
-  echo "You can access it at http://$PUBLIC_IP:$PHPMYADMIN_PORT"
+  echo "You can access it at http://127.0.0.1:$PHPMYADMIN_PORT"
 else
   echo "PhpMyAdmin is disabled"
 fi
