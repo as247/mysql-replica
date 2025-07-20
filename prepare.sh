@@ -190,7 +190,7 @@ chown -R 999:999 mysql/data
 echo "Mysql prepared"
 echo "You can start the mysql server by running 'docker compose up -d --force-recreate'"
 echo "********************************************************"
-echo "Public port: $MYSQL_PORT"
+echo "MySQL port: $MYSQL_PORT"
 echo "Root password: $MYSQL_ROOT_PASSWORD"
 echo "*********************************************************"
 echo "* Host: $IP_ADDRESS_PREFIX.2"
