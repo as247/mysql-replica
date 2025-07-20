@@ -18,11 +18,6 @@ if [ "$1" == "--reset" ]; then
   isReset="yes"
 fi
 passwordLength=20
-if [ "$architecture" == "x86_64" ]; then
-  MYSQL_IMAGE="mysql:8.0.40-debian"
-else
-  MYSQL_IMAGE="mysql:8.0.40"
-fi
 find_free_port() {
     local start_port=$1
     local end_port=$2
@@ -45,9 +40,18 @@ if [ $isReset == "yes" ]; then
     #Mysql port is set, so we need to reset it
     MYSQL_PORT=""
   fi
+  MYSQL_IMAGE=""
   MYSQL_REPLICA_PASSWORD=""
   MYSQL_ROOT_PASSWORD=""
   MYSQL_PASSWORD=""
+fi
+if [ -z "$MYSQL_IMAGE" ]; then
+  # Set default MySQL image based on architecture
+  if [ "$architecture" == "x86_64" ]; then
+    MYSQL_IMAGE="mysql:8.0.42-debian"
+  else
+    MYSQL_IMAGE="mysql:8.0.42"
+  fi
 fi
 #if MYSQL_PORT is not set then set it to 33306
 if [ -z "$MYSQL_PORT" ]; then
@@ -225,6 +229,7 @@ NC='\033[0m' # No Color (reset)
 echo -e "${GREEN}${BOLD}Mysql prepared${NC}"
 echo -e "${CYAN}You can start the mysql server by running 'docker compose up -d --force-recreate'${NC}"
 echo -e "${YELLOW}********************************************************${NC}"
+echo -e "${BOLD}MySQL Image:${NC} ${BLUE}$MYSQL_IMAGE${NC}"
 echo -e "${BOLD}MySQL port:${NC} ${BLUE}$MYSQL_PORT${NC}"
 echo -e "${BOLD}Root password:${NC} ${RED}$MYSQL_ROOT_PASSWORD${NC}"
 echo -e "${YELLOW}********************************************************${NC}"
