@@ -1,35 +1,38 @@
 #!/bin/bash
-#switch to bash if run by sh
-if [ -z "$BASH_VERSION" ]; then
-    exec bash "$0" "$@"
-fi
-# Get the directory where the script is located
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-SCRIPT_DIR=$(realpath "$SCRIPT_DIR")
+if [ -z "$BASH_VERSION" ]; then exec bash "$0" "$@"; fi
+SCRIPT_DIR=$(realpath "$(dirname "$(readlink -f "$0")")")
 
 source "$SCRIPT_DIR/env.sh"
-restore_file=""
+
 if [ -z "$1" ]; then
   echo "Usage: restore.sh <backup_file>"
   exit 1
-else
-  restore_file="$1"
 fi
+
+restore_file="$1"
 if [ ! -f "$restore_file" ]; then
-  echo "File $restore_file not found"
+  echo "❌ File $restore_file not found"
   exit 1
 fi
-echo "Restore $restore_file"
-#drop all tables
-echo "Drop all tables"
+
+echo "Restoring from $restore_file"
+
 dropTables_file="$SCRIPT_DIR/mysql/helpers/droptables.sql"
-dockerCmd="docker compose -f $SCRIPT_DIR/docker-compose.yml"
-$dockerCmd exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < "$dropTables_file"
-echo "Restoring"
-#check if file is gzip
-if [[ "$restore_file" == *.gz ]]; then
-  gunzip -c "$restore_file" | $dockerCmd exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"
-else
-  $dockerCmd exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < "$restore_file"
+dockerCmd=(docker compose -f "$SCRIPT_DIR/docker-compose.yml")
+
+echo "Dropping all tables in $MYSQL_DATABASE..."
+if ! "${dockerCmd[@]}" exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < "$dropTables_file"; then
+  echo "❌ Failed to drop tables"
+  exit 2
 fi
-echo "Restore done"
+
+echo "Restoring data..."
+start=$(date +%s)
+if [[ "$restore_file" == *.gz ]]; then
+  gunzip -c "$restore_file" | "${dockerCmd[@]}" exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"
+else
+  "${dockerCmd[@]}" exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < "$restore_file"
+fi
+end=$(date +%s)
+
+echo "✅ Restore done in $((end - start)) seconds"
