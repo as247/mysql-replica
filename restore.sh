@@ -23,12 +23,13 @@ echo "Restore $restore_file"
 #drop all tables
 echo "Drop all tables"
 dropTables_file="$SCRIPT_DIR/mysql/helpers/droptables.sql"
-docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < "$dropTables_file"
+dockerCmd="docker compose -f $SCRIPT_DIR/docker-compose.yml"
+$dockerCmd exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < "$dropTables_file"
 echo "Restoring"
 #check if file is gzip
 if [[ "$restore_file" == *.gz ]]; then
-  gunzip -c "$restore_file" | docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"
+  gunzip -c "$restore_file" | $dockerCmd exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"
 else
-  docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < "$restore_file"
+  $dockerCmd exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" < "$restore_file"
 fi
 echo "Restore done"

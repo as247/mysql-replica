@@ -23,8 +23,8 @@ else
   fi
 fi
 
-
-docker compose exec -T db mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --single-transaction --complete-insert "$MYSQL_DATABASE" | gzip -c > "$backup_file"
+dockerCmd="docker compose -f $SCRIPT_DIR/docker-compose.yml"
+$dockerCmd exec -T db mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --single-transaction --complete-insert "$MYSQL_DATABASE" | gzip -c > "$backup_file"
 echo "Backup saved to $backup_file"
 if [ -n "$cleanup_file" ]; then
   echo "Cleanup old backups"
