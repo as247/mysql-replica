@@ -105,8 +105,7 @@ if [ -z "$PHPMYADMIN_PORT" ]; then
 fi
 
 if [ $PHPMYADMIN_PORT -ne 0 ]; then
-  echo "PHPMYADMIN_PORT=$PHPMYADMIN_PORT"
-  echo "Enable phpmyadmin in docker-compose.yml"
+  echo "Enable phpmyadmin($PHPMYADMIN_PORT) in docker-compose.yml"
   # Uncomment only lines between #phpmyadmin-start and #phpmyadmin-end
   sed -i '/#phpmyadmin-start/,/#phpmyadmin-end/ {
     /#phpmyadmin-start/b
