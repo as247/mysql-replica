@@ -198,6 +198,13 @@ echo "* Name: $MYSQL_DATABASE"
 echo "* User: $MYSQL_USER"
 echo "* Pass: $MYSQL_PASSWORD"
 echo "*********************************************************"
+if [ $PHPMYADMIN_PORT -ne 0 ]; then
+  echo "PhpMyAdmin is enabled on port $PHPMYADMIN_PORT"
+  $PUBLIC_IP=$(curl -s4 ifconfig.me)
+  echo "You can access it at http://$PUBLIC_IP:$PHPMYADMIN_PORT"
+else
+  echo "PhpMyAdmin is disabled"
+fi
 
 # rename init/100-set-replica.sql.txt to init/100-set-replica.sql if server id in conf.d/001-server.cnf is not 1
 #if [ "$(grep -c "server-id[[:space:]]*=[[:space:]]*1" conf.d/001-server.cnf)" -eq 0 ]; then
