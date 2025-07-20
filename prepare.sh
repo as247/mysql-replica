@@ -186,22 +186,32 @@ if [ "$(ls -A mysql/data/mysql)" ]; then
 fi
 
 chown -R 999:999 mysql/data
-echo "Mysql prepared"
-echo "You can start the mysql server by running 'docker compose up -d --force-recreate'"
-echo "********************************************************"
-echo "MySQL port: $MYSQL_PORT"
-echo "Root password: $MYSQL_ROOT_PASSWORD"
-echo "*********************************************************"
-echo "* Host: $IP_ADDRESS_PREFIX.2"
-echo "* Name: $MYSQL_DATABASE"
-echo "* User: $MYSQL_USER"
-echo "* Pass: $MYSQL_PASSWORD"
-echo "*********************************************************"
-if [ $PHPMYADMIN_PORT -ne 0 ]; then
-  echo "PhpMyAdmin is enabled on port $PHPMYADMIN_PORT"
-  echo "You can access it at http://127.0.0.1:$PHPMYADMIN_PORT"
+# Color ANSI
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m' # No Color (reset)
+
+echo -e "${GREEN}${BOLD}Mysql prepared${NC}"
+echo -e "${CYAN}You can start the mysql server by running 'docker compose up -d --force-recreate'${NC}"
+echo -e "${YELLOW}********************************************************${NC}"
+echo -e "${BOLD}MySQL port:${NC} ${BLUE}$MYSQL_PORT${NC}"
+echo -e "${BOLD}Root password:${NC} ${RED}$MYSQL_ROOT_PASSWORD${NC}"
+echo -e "${YELLOW}********************************************************${NC}"
+echo -e "${BOLD}* Host:${NC} ${BLUE}$IP_ADDRESS_PREFIX.2${NC}"
+echo -e "${BOLD}* Name:${NC} ${BLUE}$MYSQL_DATABASE${NC}"
+echo -e "${BOLD}* User:${NC} ${BLUE}$MYSQL_USER${NC}"
+echo -e "${BOLD}* Pass:${NC} ${RED}$MYSQL_PASSWORD${NC}"
+echo -e "${YELLOW}********************************************************${NC}"
+
+if [ "$PHPMYADMIN_PORT" -ne 0 ]; then
+  echo -e "${GREEN}PhpMyAdmin is enabled on port ${PHPMYADMIN_PORT}${NC}"
+  echo -e "${CYAN}You can access it at http://127.0.0.1:${PHPMYADMIN_PORT}${NC}"
 else
-  echo "PhpMyAdmin is disabled"
+  echo -e "${RED}PhpMyAdmin is disabled${NC}"
 fi
 
 # rename init/100-set-replica.sql.txt to init/100-set-replica.sql if server id in conf.d/001-server.cnf is not 1
