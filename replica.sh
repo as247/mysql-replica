@@ -41,5 +41,5 @@ source ./prepare.sh
 echo "Prepare replica init files"
 cp mysql/init/replica/*.* mysql/init
 echo "Replica init file prepared. Starting service"
-docker compose up -d
+docker compose up -d --force-recreate
 

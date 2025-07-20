@@ -175,22 +175,20 @@ mkdir -p mysql/data/mysql
 mkdir -p mysql/data/log
 # Check if data and log dir empty or not if not empty then try to empty it with confirmation
 if [ "$(ls -A mysql/data/mysql)" ]; then
-    read -p "data/mysql is not empty, do you want to empty it? (y/n) " -r
-
-    if [[ $REPLY =~ ^[Yy]$ ]]
-    then
+    if [ "$1" == "--reset" ]; then
+        echo "Resetting data/mysql and data/log directories"
         docker compose down
         rm -rf mysql/data/*
         mkdir -p mysql/data/mysql
         mkdir -p mysql/data/log
     else
-        echo "Keep existing data"
+        echo "Data directory is not empty, if you want to empty it run this script again with --reset option"
     fi
 fi
 
 chown -R 999:999 mysql/data
 echo "Mysql prepared"
-echo "You can start the mysql server by running 'docker compose up -d'"
+echo "You can start the mysql server by running 'docker compose up -d --force-recreate'"
 echo "********************************************************"
 echo "Public port: $MYSQL_PORT"
 echo "Root password: $MYSQL_ROOT_PASSWORD"
