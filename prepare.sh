@@ -39,6 +39,15 @@ find_free_port() {
     echo "No free port found in the range $start_port-$end_port"
     return 1
 }
+if [ $isReset == "yes" ]; then
+  echo "Regenerate passwords"
+  if [ $MYSQL_PORT -ne 0 ]; then
+    MYSQL_PORT=""
+  fi
+  MYSQL_REPLICA_PASSWORD=""
+  MYSQL_ROOT_PASSWORD=""
+  MYSQL_PASSWORD=""
+fi
 #if MYSQL_PORT is not set then set it to 33306
 if [ -z "$MYSQL_PORT" ]; then
   #Mysql default port is free port > 3306
@@ -94,6 +103,11 @@ if [ -z "$PHPMYADMIN_PORT" ]; then
       PHPMYADMIN_PORT=0
   fi
 fi
+if [ $isReset == "yes" ]; then
+  if [ $PHPMYADMIN_PORT -ne 0 ]; then
+      PHPMYADMIN_PORT=""
+  fi
+fi
 #if PHPMYADMIN_PORT is not set then set it to 8800
 if [ -z "$PHPMYADMIN_PORT" ]; then
   #ask for phpmyadmin port
@@ -126,12 +140,7 @@ else
   }' docker-compose.yml
 fi
 
-if [ $isReset == "yes" ]; then
-  echo "Regenerate passwords"
-  MYSQL_REPLICA_PASSWORD=""
-  MYSQL_ROOT_PASSWORD=""
-  MYSQL_PASSWORD=""
-fi
+
 #echo "Generate random password for MYSQL_REPLICA_PASSWORD"
 if [ -z "$MYSQL_REPLICA_PASSWORD" ]; then
   MYSQL_REPLICA_PASSWORD=$(< /dev/urandom tr -dc '[:upper:]' | head -c 1)$(< /dev/urandom tr -dc '[:lower:]' | head -c 1)$(< /dev/urandom tr -dc '0-9' | head -c 1)$(< /dev/urandom tr -dc '[:alnum:]' | head -c "$((passwordLength - 3))"; echo)
