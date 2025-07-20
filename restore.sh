@@ -5,10 +5,9 @@ if [ -z "$BASH_VERSION" ]; then
 fi
 # Get the directory where the script is located
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-# Navigate to the script's directory
-cd "$SCRIPT_DIR" || exit
+SCRIPT_DIR=$(realpath "$SCRIPT_DIR")
 
-source ./env.sh
+source $SCRIPT_DIR/env.sh
 restore_file=""
 if [ -z "$1" ]; then
   echo "Usage: restore.sh <backup_file>"

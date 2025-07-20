@@ -5,14 +5,14 @@ if [ -z "$BASH_VERSION" ]; then
 fi
 # Get the directory where the script is located
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-# Navigate to the script's directory
-cd "$SCRIPT_DIR" || exit
+#make script directory absolute
+SCRIPT_DIR=$(realpath "$SCRIPT_DIR")
 
-source ./env.sh
-mkdir -p backup
+source $SCRIPT_DIR/env.sh
 #check backup file from argument
 if [ -z "$1" ]; then
-  backup_file="backup/$(date +%Y%m%d_%H%M%S)-$MYSQL_DATABASE.sql.gz"
+  mkdir -p $SCRIPT_DIR/backup
+  backup_file="$SCRIPT_DIR/backup/$(date +%Y%m%d_%H%M%S)-$MYSQL_DATABASE.sql.gz"
 else
   backup_file="$1"
   #if file name not end with .gz then add it
