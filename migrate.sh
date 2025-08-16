@@ -43,6 +43,7 @@ echo "Backing up $MYSQL_DATABASE for slave"
 backup_file="mysql/init/150-import-$MYSQL_DATABASE.sql"
 docker compose exec -T db mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --single-transaction --complete-insert --set-gtid-purged=ON "$MYSQL_DATABASE" > "$backup_file"
 gzip -f "$backup_file"
+cp .env .env.bak
 echo "Backup done"
 echo "Update REPLICA_HOST to $externalIP"
 sed -i "s/MYSQL_REPLICA_HOST=.*/MYSQL_REPLICA_HOST=\"$externalIP\"/" .env
@@ -54,3 +55,5 @@ sed -i "s/MYSQL_PORT=.*/MYSQL_PORT=\"0\"/" .env
 echo "Creating package for slave"
 tar -zcf "../$FOLDER_NAME.tar.gz" --exclude=mysql/data --exclude=mysql/log --exclude=backup --exclude=.idea -C .. "$FOLDER_NAME"
 echo "Package created: $FOLDER_NAME.tar.gz"
+echo "Restoring .env file from backup"
+mv .env.bak .env
