@@ -1,5 +1,5 @@
 *
 !.gitignore
-!conf.d
-!helpers
-!init
+!conf.d/**
+!helpers/**
+!init/**
