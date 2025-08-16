@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ -n "$MYSQL_ROOT_PASSWORD" ] && [ -n "$MYSQL_REPLICA_HOST" ] && \
+   [ -n "$MYSQL_REPLICA_PORT" ] && [ -n "$MYSQL_REPLICA_USER" ] && \
+   [ -n "$MYSQL_REPLICA_PASSWORD" ]; then
+  echo "Setting up replication with GTID"
+  mysql -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" -e "
+    STOP REPLICA;
+    RESET REPLICA ALL;
+    CHANGE REPLICATION SOURCE TO
+      SOURCE_HOST='$MYSQL_REPLICA_HOST',
+      SOURCE_PORT=$MYSQL_REPLICA_PORT,
+      SOURCE_USER='$MYSQL_REPLICA_USER',
+      SOURCE_PASSWORD='$MYSQL_REPLICA_PASSWORD',
+      SOURCE_AUTO_POSITION=1;
+  "
+fi

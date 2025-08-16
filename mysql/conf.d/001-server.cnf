@@ -1,0 +1,10 @@
+[mysqld]
+default_time_zone = 'Asia/Ho_Chi_Minh'
+server-id               = 1
+log_bin                 = /var/log/mysql/mysql-bin.log
+relay-log               = /var/log/mysql/mysql-relay-bin.log
+
+# GTID mode
+gtid_mode               = ON
+enforce_gtid_consistency = ON
+binlog_format           = ROW
