@@ -1,8 +1,10 @@
 #!/bin/bash
+# Switch to bash if not already
 if [ -z "$BASH_VERSION" ]; then exec bash "$0" "$@"; fi
+# Get the directory where this script is located
 SCRIPT_DIR=$(realpath "$(dirname "$(readlink -f "$0")")")
 
-source "$SCRIPT_DIR/env.sh"
+source "$SCRIPT_DIR/.envload"
 
 if [ -z "$1" ]; then
   echo "Usage: restore.sh <backup_file>"
@@ -12,6 +14,12 @@ fi
 restore_file="$1"
 if [ ! -f "$restore_file" ]; then
   echo "❌ File $restore_file not found"
+  exit 1
+fi
+
+# Ensure MYSQL_DATABASE and MYSQL_ROOT_PASSWORD are set
+if [ -z "$MYSQL_DATABASE" ] || [ -z "$MYSQL_ROOT_PASSWORD" ]; then
+  echo "❌ MYSQL_DATABASE or MYSQL_ROOT_PASSWORD not set. Check $SCRIPT_DIR/.env"
   exit 1
 fi
 

@@ -1,10 +1,9 @@
 #!/bin/bash
+# Switch to bash if not already
+if [ -z "$BASH_VERSION" ]; then exec bash "$0" "$@"; fi
+# Get the directory where this script is located
+SCRIPT_DIR=$(realpath "$(dirname "$(readlink -f "$0")")")
 
-if [ -z "$BASH_VERSION" ]; then
-    exec bash "$0" "$@"
-fi
-# Get the directory where the script is located
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 # Navigate to the script's directory
 cd "$SCRIPT_DIR" || exit
 #convert slave to primary
@@ -20,7 +19,9 @@ then
     echo "cancelled"
     exit 1
 fi
-source ./env.sh
+# Load environment variables
+source "$SCRIPT_DIR/.envload"
+
 docker compose exec -T db mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "STOP REPLICA; RESET REPLICA; SHOW SLAVE STATUS\G"
 echo "Change server id to 1"
 sed -i "s/server-id[[:space:]]*=[[:space:]]*[^ ]*/server-id = 1/g" mysql/conf.d/001-server.cnf

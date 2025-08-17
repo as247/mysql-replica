@@ -7,11 +7,11 @@ if [ -z "$BASH_VERSION" ]; then exec bash "$0" "$@"; fi
 SCRIPT_DIR=$(realpath "$(dirname "$(readlink -f "$0")")")
 
 # Load environment variables
-source "$SCRIPT_DIR/env.sh"
+source "$SCRIPT_DIR/.envload"
 
 # Ensure MYSQL_DATABASE and MYSQL_ROOT_PASSWORD are set
 if [ -z "$MYSQL_DATABASE" ] || [ -z "$MYSQL_ROOT_PASSWORD" ]; then
-  echo "❌ MYSQL_DATABASE or MYSQL_ROOT_PASSWORD not set. Check env.sh"
+  echo "❌ MYSQL_DATABASE or MYSQL_ROOT_PASSWORD not set. Check $SCRIPT_DIR/.env"
   exit 1
 fi
 

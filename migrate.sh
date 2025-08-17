@@ -1,16 +1,17 @@
 #!/bin/bash
-if [ -z "$BASH_VERSION" ]; then
-    exec bash "$0" "$@"
-fi
-# Get the directory where the script is located
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+# Switch to bash if not already
+if [ -z "$BASH_VERSION" ]; then exec bash "$0" "$@"; fi
+# Get the directory where this script is located
+SCRIPT_DIR=$(realpath "$(dirname "$(readlink -f "$0")")")
 
 # Navigate to the script's directory
 cd "$SCRIPT_DIR" || exit
+# Load environment variables
+source "$SCRIPT_DIR/.envload"
+
 # Folder name without the path
 FOLDER_NAME=$(basename "$SCRIPT_DIR")
 
-source ./env.sh
 externalIP=$(curl -s4 ifconfig.me)
 
 if [ "$1" == "master" ]; then
