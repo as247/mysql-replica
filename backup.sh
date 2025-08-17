@@ -36,7 +36,7 @@ echo "   $backup_file"
 start=$(date +%s)
 
 if "${dockerCmd[@]}" exec -T db mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" \
-    --single-transaction --complete-insert "$MYSQL_DATABASE" | gzip -c > "$backup_file"; then
+    --single-transaction --complete-insert --set-gtid-purged=OFF "$MYSQL_DATABASE" | gzip -c > "$backup_file"; then
   echo "✅ Backup completed"
 else
   echo "❌ Backup failed"
