@@ -1,8 +1,4 @@
-*
-!.gitignore
-!conf.d/
-!conf.d/**
-!helpers/
-!helpers/**
-!init/
-!init/**
+data
+conf.d/*
+!conf.d/001-server.cnf
+!conf.d/002-performance.cnf
