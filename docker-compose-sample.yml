@@ -33,4 +33,4 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: ${IP_ADDRESS_PREFIX}.0/25
+        - subnet: ${IP_ADDRESS_PREFIX}.0/24
