@@ -9,7 +9,13 @@ cd "$SCRIPT_DIR" || exit
 # check server id
 if [ "$(grep -c "server-id[[:space:]]*=[[:space:]]*1$" mysql/conf.d/001-server.cnf)" -eq 1 ]; then
     echo "This is master server"
-    suggest_server_id=$(curl -s ifconfig.me | tr -d . | rev | cut -c 1-4 | rev)
+    SERVER_IP=$(curl -s ifconfig.me)
+    suggest_server_id=$(echo $SERVER_IP | cksum | awk '{print $1}')
+    suggest_server_id=$(( suggest_server_id % 4294967295 ))
+    if [ "$suggest_server_id" -eq 0 ] || [ "$suggest_server_id" -eq 1 ]; then
+      suggest_server_id=$( echo $SERVER_IP | tr -d . | rev | cut -c 1-4 | rev)
+    fi
+
     # set server_id with prompt
     read -p "Enter server id[$suggest_server_id]: " server_id
     if [ -z "$server_id" ]; then
