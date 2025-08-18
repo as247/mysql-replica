@@ -1,0 +1,8 @@
+[mysqld]
+# Performance
+# Remove leading # and set to the amount of RAM for the most important data
+# cache in MySQL. Start at 70% of total RAM for dedicated server, else 10%.
+# innodb_buffer_pool_size = 128M
+# query_cache_size = 8M
+thread_cache_size = 768
+table_open_cache = 8000
