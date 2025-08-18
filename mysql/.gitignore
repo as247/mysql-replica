@@ -1,4 +1,4 @@
 data
 conf.d/*
 !conf.d/001-server.cnf
-!conf.d/002-performance.sample
+!conf.d/002-server-custom.cnf.sample
