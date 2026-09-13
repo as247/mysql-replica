@@ -6,4 +6,4 @@ relay-log               = /var/log/mysql/mysql-relay-bin.log
 # GTID mode
 gtid_mode               = ON
 enforce_gtid_consistency = ON
-binlog_format           = ROW
+

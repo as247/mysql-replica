@@ -47,11 +47,7 @@ if [ $isReset == "yes" ]; then
 fi
 if [ -z "$MYSQL_IMAGE" ]; then
   # Set default MySQL image based on architecture
-  if [ "$architecture" == "x86_64" ]; then
-    MYSQL_IMAGE="mysql:8.0.43-debian"
-  else
-    MYSQL_IMAGE="mysql:8.0.43"
-  fi
+  MYSQL_IMAGE="mysql:8.4"
 fi
 #if MYSQL_PORT is not set then set it to 33306
 if [ -z "$MYSQL_PORT" ]; then
